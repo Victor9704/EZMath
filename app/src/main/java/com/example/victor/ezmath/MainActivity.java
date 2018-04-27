@@ -1,14 +1,14 @@
 package com.example.victor.ezmath;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.fathzer.soft.javaluator.DoubleEvaluator;
+import exceptions.LexerException;
+import exceptions.ParserException;
+import parser.JParser;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -209,12 +209,32 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.btnSOLVE:
 
-                DoubleEvaluator evaluator = new DoubleEvaluator();
 
-                Double result = evaluator.evaluate(expression);
-                editText.setText(result.toString(), TextView.BufferType.EDITABLE);
-                expressionPosition = editText.getText().length();
-                editText.setSelection(expressionPosition);
+                JParser jp = JParser.getInstance();
+
+                try {
+                    jp.compileExpression(expression);
+                } catch (LexerException e) {
+                    e.printStackTrace();
+                } catch (ParserException e) {
+                    e.printStackTrace();
+                }
+
+                try {
+                    Double result = jp.evaluate();
+                    editText.setText(result.toString(), TextView.BufferType.EDITABLE);
+                    expressionPosition = editText.getText().length();
+                    editText.setSelection(expressionPosition);
+                } catch (ParserException e) {
+                    e.printStackTrace();
+                }
+
+//                DoubleEvaluator evaluator = new DoubleEvaluator();
+//
+//                Double result = evaluator.evaluate(expression);
+//                editText.setText(result.toString(), TextView.BufferType.EDITABLE);
+//                expressionPosition = editText.getText().length();
+//                editText.setSelection(expressionPosition);
 
                 break;
 
