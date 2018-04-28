@@ -1,4 +1,4 @@
-package com.example.victor.ezmath;
+package com.ezmath.main.ezmath;
 
 import org.junit.Test;
 

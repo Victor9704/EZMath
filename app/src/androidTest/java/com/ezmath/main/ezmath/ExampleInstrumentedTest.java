@@ -1,4 +1,4 @@
-package com.example.victor.ezmath;
+package com.ezmath.main.ezmath;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
