@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
+
+        <LinearLayout
+            android:id="@+id/top"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+
+            <TextView
+                android:text="Button Number"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:minHeight="50dp"
+                android:minWidth="50dp"
+                android:layout_height="wrap_content"
+                />
+
+            <TextView
+                android:text="Current"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:minHeight="50dp"
+                android:minWidth="50dp"
+                android:layout_height="wrap_content"
+                />
+
+            <TextView
+                android:text="Select New"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:minHeight="50dp"
+                android:minWidth="50dp"
+                android:layout_height="wrap_content"
+                />
+
+        </LinearLayout>
+
+        <ListView
+            app:layout_constraintTop_toBottomOf="@+id/top"
+            android:id="@+id/list_view"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            >
+
+        </ListView>
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

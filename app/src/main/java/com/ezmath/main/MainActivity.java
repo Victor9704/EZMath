@@ -1,18 +1,29 @@
 package com.ezmath.main;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.app.VoiceInteractor;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.support.v7.widget.Toolbar;
 
+import com.ezmath.activities.OptionsActivity;
+import com.ezmath.helpers.ButtonHelper;
 import com.ezmath.main.ezmath.R;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import exceptions.LexerException;
 import exceptions.ParserException;
@@ -20,17 +31,25 @@ import parser.JParser;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Toolbar toolbar;
-    EditText editText;
+    private ButtonHelper buttonHelper;
 
-    String expression;
-    String result;
-    int expressionPosition = 1;
+    private EditText editText;
+    private int Precision;
+
+    private String expression;
+    private String result;
+    private int expressionPosition = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Bundle bundle = getIntent().getExtras();
+
+        if(bundle != null){
+            //TO DO
+        }
 
         //Set Edit Text
         editText = findViewById(R.id.editText);
@@ -47,12 +66,36 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+//        buttonHelper = new ButtonHelper(getWindow().getDecorView().getRootView());
+//        buttonHelper.setDefaultButtons();
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        //Get list of buttons
+        List<String> btnList = new ArrayList<String>();
+        Button temp;
+        for (int i = 0; i < 25; i++) {
+            int id = getResources().getIdentifier("btn"+i, "id", getPackageName());
+            temp = (Button) findViewById(id);
+            btnList.add(temp.getText().toString());
+        }
+
+        Intent intent = new Intent(this, OptionsActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);//makes sure can't go back to it while pressing back button
+        intent.putStringArrayListExtra("btnList", (ArrayList<String>) btnList);
+        startActivity(intent);
+        finish();
+
         return true;
     }
 
@@ -66,19 +109,31 @@ public class MainActivity extends AppCompatActivity {
             tempBtnText = "sqrt";
         }
 
+        if(tempBtn.getText().toString().toLowerCase().equals("e^x")){
+            tempBtnText = "e^";
+        }
+
         if(!tempBtnText.equals("clear") && !tempBtnText.equals("solve")) {
             if (tempBtnText.length() == 1) {
-                if (expression.equals("0")) {
+                //If length 1 check for "0" as initial expression and if you have "0" and add "." to it
+                if (expression.equals("0") && !tempBtnText.equals(".")) {
                     result = tempBtnText;
                     editText.setText(result, TextView.BufferType.EDITABLE);
                     editText.setSelection(expressionPosition);
-                } else {
+                }
+                else if(expression.equals("0") && tempBtnText.equals(".")){
+                    result = "0" + tempBtnText;
+                    expressionPosition++;//For "0." string length is 2
+                    editText.setText(result, TextView.BufferType.EDITABLE);
+                    editText.setSelection(expressionPosition);
+                }
+                else {
                     result = concatExpression(expression, tempBtnText, expressionPosition);
                     editText.setText(result, TextView.BufferType.EDITABLE);
                     expressionPosition++;
                     editText.setSelection(expressionPosition);
                 }
-             //If Function
+             //If Function ex sin, cos etc...
             } else {
                 if (expression.equals("0")) {
                     result = tempBtnText + "()";
@@ -112,14 +167,21 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 try {
+                    DecimalFormat dFormat;
+
                     Double result = jp.evaluate();
 
-                    //Remove Trailing 0's
-                    DecimalFormat dFormat = new DecimalFormat("0.#");
-
-                    editText.setText(dFormat.format(result).toString(), TextView.BufferType.EDITABLE);
-                    expressionPosition = editText.getText().length();
-                    editText.setSelection(expressionPosition);
+                    //Remove Trailing 0 from 0.0
+                    if(result % 1 == 0) {
+                        dFormat = new DecimalFormat("0.#");
+                        editText.setText(dFormat.format(result).toString(), TextView.BufferType.EDITABLE);
+                        expressionPosition = editText.getText().length();
+                        editText.setSelection(expressionPosition);
+                    }else {
+                        editText.setText(result.toString(), TextView.BufferType.EDITABLE);
+                        expressionPosition = editText.getText().length();
+                        editText.setSelection(expressionPosition);
+                    }
                 } catch (ParserException e) {
                     e.printStackTrace();
                 }
@@ -127,221 +189,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
-
-
-//    public void onClick(View v) {
-//
-//        expression = editText.getText().toString();
-//        Button tempBtn = v.findViewById(v.getId());
-//
-//        switch (v.getId()) {
-//            case R.id.btn0:
-//                if(!expression.equals("0")) {
-//                    result = concatExpression(expression,"0", expressionPosition);
-//                    editText.setText(result, TextView.BufferType.EDITABLE);
-//                    expressionPosition++;
-//                    editText.setSelection(expressionPosition);
-//                }
-//                break;
-//
-//            case R.id.btn1:
-//                if(expression.equals("0")) {
-//                    result = "1";
-//                    editText.setText(result, TextView.BufferType.EDITABLE);
-//                    editText.setSelection(expressionPosition);
-//                }
-//                else{
-//                    result = concatExpression(expression,"1", expressionPosition);
-//                    editText.setText(result, TextView.BufferType.EDITABLE);
-//                    expressionPosition++;
-//                    editText.setSelection(expressionPosition);
-//                }
-//                break;
-//
-//            case R.id.btn2:
-//                if(expression.equals("0")) {
-//                    result = "2";
-//                    editText.setText(result, TextView.BufferType.EDITABLE);
-//                    editText.setSelection(expressionPosition);
-//                }
-//                else{
-//                    result = expression.substring(0, editText.getSelectionEnd()) + "2" + expression.substring(editText.getSelectionEnd(),expression.length());
-//                    editText.setText(result, TextView.BufferType.EDITABLE);
-//                    expressionPosition++;
-//                    editText.setSelection(expressionPosition);
-//                }
-//                break;
-//
-//            case R.id.btn3:
-//                if(expression.equals("0")) {
-//                    result = "3";
-//                    editText.setText(result, TextView.BufferType.EDITABLE);
-//                    editText.setSelection(expressionPosition);
-//                }
-//                else{
-//                    result = expression.substring(0, editText.getSelectionEnd()) + "3" + expression.substring(editText.getSelectionEnd(),expression.length());
-//                    editText.setText(result, TextView.BufferType.EDITABLE);
-//                    expressionPosition++;
-//                    editText.setSelection(expressionPosition);
-//                }
-//                break;
-//
-//            case R.id.btn4:
-//                if(expression.equals("0")) {
-//                    result = "4";
-//                    editText.setText(result, TextView.BufferType.EDITABLE);
-//                    editText.setSelection(expressionPosition);
-//                }
-//                else{
-//                    result = expression.substring(0, editText.getSelectionEnd()) + "4" + expression.substring(editText.getSelectionEnd(),expression.length());
-//                    editText.setText(result, TextView.BufferType.EDITABLE);
-//                    expressionPosition++;
-//                    editText.setSelection(expressionPosition);
-//                }
-//                break;
-//
-//            case R.id.btn5:
-//                if(expression.equals("0")) {
-//                    result = "5";
-//                    editText.setText(result, TextView.BufferType.EDITABLE);
-//                    editText.setSelection(expressionPosition);
-//                }
-//                else{
-//                    result = expression.substring(0, editText.getSelectionEnd()) + "5" + expression.substring(editText.getSelectionEnd(),expression.length());
-//                    editText.setText(result, TextView.BufferType.EDITABLE);
-//                    expressionPosition++;
-//                    editText.setSelection(expressionPosition);
-//                }
-//                break;
-//
-//            case R.id.btn6:
-//                if(expression.equals("0")) {
-//                    result = "6";
-//                    editText.setText(result, TextView.BufferType.EDITABLE);
-//                    editText.setSelection(expressionPosition);
-//                }
-//                else{
-//                    result = expression.substring(0, editText.getSelectionEnd()) + "6" + expression.substring(editText.getSelectionEnd(),expression.length());
-//                    editText.setText(result, TextView.BufferType.EDITABLE);
-//                    expressionPosition++;
-//                    editText.setSelection(expressionPosition);
-//                }
-//                break;
-//
-//            case R.id.btn7:
-//                if(expression.equals("0")) {
-//                    result = "7";
-//                    editText.setText(result, TextView.BufferType.EDITABLE);
-//                    editText.setSelection(expressionPosition);
-//                }
-//                else{
-//                    result = expression.substring(0, editText.getSelectionEnd()) + "7" + expression.substring(editText.getSelectionEnd(),expression.length());
-//                    editText.setText(result, TextView.BufferType.EDITABLE);
-//                    expressionPosition++;
-//                    editText.setSelection(expressionPosition);
-//                }
-//                break;
-//
-//            case R.id.btn8:
-//                if(expression.equals("0")) {
-//                    result = "8";
-//                    editText.setText(result, TextView.BufferType.EDITABLE);
-//                    editText.setSelection(expressionPosition);
-//                }
-//                else{
-//                    expressionPosition++;
-//                    result = expression.substring(0, editText.getSelectionEnd()) + "8" + expression.substring(editText.getSelectionEnd(),expression.length());
-//                    editText.setText(result, TextView.BufferType.EDITABLE);
-//                    editText.setSelection(expressionPosition);
-//                }
-//                break;
-//
-//            case R.id.btn9:
-//                if(expression.equals("0")) {
-//                    result = "9";
-//                    editText.setText(result, TextView.BufferType.EDITABLE);
-//                    editText.setSelection(expressionPosition);
-//                }
-//                else{
-//                    result = expression.substring(0, editText.getSelectionEnd()) + "9" + expression.substring(editText.getSelectionEnd(),expression.length());
-//                    editText.setText(result, TextView.BufferType.EDITABLE);
-//                    expressionPosition++;
-//                    editText.setSelection(expressionPosition);
-//                }
-//                break;
-//
-//            case R.id.btnAdd:
-//
-//                expressionPosition += 3;
-//                result = expression.concat(" + ");
-//                editText.setText(result, TextView.BufferType.EDITABLE);
-//                editText.setSelection(editText.getText().length());
-//
-//                break;
-//
-//            case R.id.btnCOS:
-//                if(expression.equals("0")) {
-//                    result = "cos()";
-//                    editText.setText(result, TextView.BufferType.EDITABLE);
-//                    expressionPosition = 4;
-//                    editText.setSelection(expressionPosition);
-//                }
-//                else {
-//                    //result = expression.concat("cos()");
-//                    result = expression.substring(0,expressionPosition) + "cos()" + expression.substring(expressionPosition,expression.length());
-//                    editText.setText(result.toString(), TextView.BufferType.EDITABLE);
-//                    expressionPosition += 4;
-//                    editText.setSelection(expressionPosition);
-//                }
-//                break;
-//
-//            case R.id.btnSIN:
-//                if(expression.equals("0")) {
-//                    result = tempBtn.getText().toString().toLowerCase() + "()";
-//                    editText.setText(result, TextView.BufferType.EDITABLE);
-//                    expressionPosition = 4;
-//                    editText.setSelection(expressionPosition);
-//                }else {
-//                    result = concatExpression(expression,"sin()", expressionPosition);
-//                    editText.setText(result.toString(), TextView.BufferType.EDITABLE);
-//                    expressionPosition += 4;
-//                    editText.setSelection(expressionPosition);
-//                }
-//                break;
-//
-//            case R.id.btnSOLVE:
-//
-//
-//                JParser jp = JParser.getInstance();
-//
-//                try {
-//                    jp.compileExpression(expression);
-//                } catch (LexerException e) {
-//                    e.printStackTrace();
-//                } catch (ParserException e) {
-//                    e.printStackTrace();
-//                }
-//
-//                try {
-//                    Double result = jp.evaluate();
-//                    editText.setText(result.toString(), TextView.BufferType.EDITABLE);
-//                    expressionPosition = editText.getText().length();
-//                    editText.setSelection(expressionPosition);
-//                } catch (ParserException e) {
-//                    e.printStackTrace();
-//                }
-//
-//                break;
-//
-//            case R.id.btnCLEAR:
-//
-//                editText.setText("0");
-//                expressionPosition = 1;
-//                editText.setSelection(expressionPosition);
-//                break;
-//        }
-//
-//    }
 
     public String concatExpression(String expresion, String toConcat, int expressionPosition){
 
