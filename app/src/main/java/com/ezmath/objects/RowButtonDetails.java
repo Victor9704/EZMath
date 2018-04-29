@@ -4,16 +4,16 @@ package com.ezmath.objects;
  * Created by Victor on 29.04.2018.
  */
 
-public class ButtonDetails {
+public class RowButtonDetails {
 
     private String buttonID;
     private String buttonName;
-    private String newButtonName;
+    private int spinnerSelectedPosition;
 
-    public ButtonDetails(String buttonID, String buttonName, String newButtonName) {
+    public RowButtonDetails(String buttonID, String buttonName, int selected) {
         this.buttonID = buttonID;
         this.buttonName = buttonName;
-        this.newButtonName = newButtonName;
+        this.spinnerSelectedPosition = selected;//Initialized with 0 in OptionsActivity, representing "Selected" in function List from ButtonHelper
     }
 
     public String getButtonID() {
@@ -32,11 +32,11 @@ public class ButtonDetails {
         this.buttonName = buttonName;
     }
 
-    public String getNewButtonName() {
-        return newButtonName;
+    public int getSpinnerSelectedPosition() {
+        return spinnerSelectedPosition;
     }
 
-    public void setNewButtonName(String newButtonName) {
-        this.newButtonName = newButtonName;
+    public void setSpinnerSelectedPosition(int spinnerSelectedPosition) {
+        this.spinnerSelectedPosition = spinnerSelectedPosition;
     }
 }

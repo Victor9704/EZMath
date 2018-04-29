@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewDebug;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -20,6 +21,7 @@ import android.support.v7.widget.Toolbar;
 import com.ezmath.activities.OptionsActivity;
 import com.ezmath.helpers.ButtonHelper;
 import com.ezmath.main.ezmath.R;
+import com.ezmath.objects.RowButtonDetails;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -36,9 +38,12 @@ public class MainActivity extends AppCompatActivity {
     private EditText editText;
     private int Precision;
 
-    private String expression;
+    private String expression = null;
     private String result;
     private int expressionPosition = 1;
+
+    //Case reset requested variables
+    List<RowButtonDetails> resetButtonList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,12 +52,31 @@ public class MainActivity extends AppCompatActivity {
 
         Bundle bundle = getIntent().getExtras();
 
+        //Get and set extras data
         if(bundle != null){
-            //TO DO
+            this.expression = (String) bundle.get("expression");
+            this.expressionPosition = (int) bundle.get("expressionPosition");
+            if(bundle.get("selectedOptionsButton") != null){
+                if((int)bundle.get("selectedOptionsButton") == 1){
+                    //TO DO IMPLEMENT AND CALL RESET FROM HELPER
+                    Log.d("MyApp","Options requested button reset!");
+                }
+                if((int)bundle.get("selectedOptionsButton") == 2){
+                    //TO DO PARCELABLE AND GET FROM INTENT EXTRAS (GET FOM OPTIONS ACTIVITY)
+                    Log.d("MyApp","Options requested new buttons settings");
+                    resetButtonList = null;
+                }
+            }
         }
 
         //Set Edit Text
         editText = findViewById(R.id.editText);
+        if(expression != null){
+            editText.setText(expression, TextView.BufferType.EDITABLE);
+        }else{
+            expression = editText.getText().toString();//Get the initial 0
+        }
+
         editText.setSelection(expressionPosition);
         editText.setClickable(true);
         editText.setShowSoftInputOnFocus(false);
@@ -61,8 +85,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 expressionPosition = editText.getSelectionEnd();
-                //String hehe = editText.getSelectionEnd() + "";
-                //Log.d("Position", hehe);
+                //Log.d("Position", Integer.ToString(editText.getSelectionEnd()));
             }
         });
 
@@ -81,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        //Get list of buttons
+        //Create list of buttons
         List<String> btnList = new ArrayList<String>();
         Button temp;
         for (int i = 0; i < 25; i++) {
@@ -92,7 +115,12 @@ public class MainActivity extends AppCompatActivity {
 
         Intent intent = new Intent(this, OptionsActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);//makes sure can't go back to it while pressing back button
+
+        //Put Extra data
         intent.putStringArrayListExtra("btnList", (ArrayList<String>) btnList);
+        intent.putExtra("expression", this.expression);
+        intent.putExtra("expressionPosition", this.expressionPosition);
+
         startActivity(intent);
         finish();
 
@@ -188,6 +216,9 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
+        //Reset to new updated string, needed later
+        expression = editText.getText().toString();
+
     }
 
     public String concatExpression(String expresion, String toConcat, int expressionPosition){
@@ -196,4 +227,11 @@ public class MainActivity extends AppCompatActivity {
 
         return result;
     }
+
+    //TO DO
+    public void setNewButtonPreferences(){
+
+
+    }
+
 }

@@ -23,6 +23,7 @@
                 android:layout_width="0dp"
                 android:minHeight="50dp"
                 android:minWidth="50dp"
+                android:gravity="center"
                 android:layout_height="wrap_content"
                 />
 
@@ -32,6 +33,7 @@
                 android:layout_width="0dp"
                 android:minHeight="50dp"
                 android:minWidth="50dp"
+                android:gravity="center"
                 android:layout_height="wrap_content"
                 />
 
@@ -41,6 +43,7 @@
                 android:layout_width="0dp"
                 android:minHeight="50dp"
                 android:minWidth="50dp"
+                android:gravity="center"
                 android:layout_height="wrap_content"
                 />
 
@@ -50,10 +53,41 @@
             app:layout_constraintTop_toBottomOf="@+id/top"
             android:id="@+id/list_view"
             android:layout_width="fill_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
             >
 
         </ListView>
+
+        <LinearLayout
+            android:id="@+id/bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+            <Button
+                android:id="@+id/btnSave"
+                android:onClick="onClick"
+                android:text="Save Changes"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="50dp"
+                android:minWidth="50dp"
+                android:layout_weight="1"
+                />
+            <Button
+                android:id="@+id/btnReset"
+                android:onClick="onClick"
+                android:text="Reset Buttons"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="50dp"
+                android:minWidth="50dp"
+                android:layout_weight="1"
+                />
+        </LinearLayout>
 
     </LinearLayout>
 

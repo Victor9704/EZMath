@@ -18,7 +18,7 @@ public class ButtonHelper {
 
     private View view;
 
-    private static List<String> buttonNamesList = new ArrayList<>(Arrays.asList("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "+",
+    private static List<String> buttonNamesList = new ArrayList<>(Arrays.asList("Select", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "+",
             "-", "*", "/", ".", "(", ")", "^", "e^x","sin", "cos", "tan", "sec", "csc", "ctg", "asin", "acos", "atan", "sinh", "cosh", "tanh", "ln", "sqrt", "solve", "clear"));
 
     public ButtonHelper(View view){

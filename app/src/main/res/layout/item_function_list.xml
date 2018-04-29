@@ -12,6 +12,7 @@
             android:layout_width="0dp"
             android:minHeight="50dp"
             android:minWidth="50dp"
+            android:gravity="center"
             android:layout_height="wrap_content"
             />
 
@@ -22,6 +23,7 @@
             android:layout_width="0dp"
             android:minHeight="50dp"
             android:minWidth="50dp"
+            android:gravity="center"
             android:layout_height="wrap_content"
             />
 
