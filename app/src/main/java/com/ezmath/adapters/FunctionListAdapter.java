@@ -11,7 +11,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.ezmath.helpers.ButtonHelper;
-import com.ezmath.main.ezmath.R;
+import com.ezmath.main.R;
 import com.ezmath.objects.RowButtonDetails;
 
 import java.util.List;

@@ -1,7 +1,10 @@
 package com.ezmath.main;
 
+import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -16,10 +19,19 @@ import com.ezmath.activities.OptionsActivity;
 import com.ezmath.helpers.ButtonHelper;
 import com.ezmath.main.R;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.lang.reflect.Array;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import exceptions.LexerException;
 import exceptions.ParserException;
@@ -36,14 +48,17 @@ public class MainActivity extends AppCompatActivity {
     private String result;
     private int expressionPosition = 1;
 
-    private ArrayList<String> buttonListToSave;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //TO DO save data and recover on app restart using files!
+        // Request user permissions in runtime
+        ActivityCompat.requestPermissions(MainActivity.this,
+                new String[] {
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                },100);
 
         Bundle bundle = getIntent().getExtras();
 
@@ -65,8 +80,13 @@ public class MainActivity extends AppCompatActivity {
                 else if((int)bundle.get("selectedOptionsButton") == 2){
                     setNewButtonPreferences(bundle);
                 }
+                //Save data if Preferences changed when returning from Options
+                saveData();
             }
         }
+
+        //TO DO save data and recover on app restart using files!
+        retrieveData();
 
         //Set Edit Text
         editText = findViewById(R.id.editText);
@@ -88,8 +108,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //Create list of buttons to store
-        buttonListToSave = createButtonList();
+        //Save current Settings to Preferences file when closing main activity
+        saveData();
 
     }
 
@@ -118,6 +138,81 @@ public class MainActivity extends AppCompatActivity {
         finish();
 
         return true;
+    }
+
+    public void saveData(){
+        Log.d("MyApp","Saving Data");
+        String folderName = "EZMath";
+        String fileName = "EZMath_Preferences";
+
+        //Create list of buttons to store
+        ArrayList<String> buttonListToSave;
+        buttonListToSave = createButtonList();
+
+        File EZMathFolder = new File(Environment.getExternalStorageDirectory(), folderName);
+
+        if(!EZMathFolder.exists()){
+            EZMathFolder.mkdirs();
+        }
+
+        File storageFile = new File(EZMathFolder.getAbsolutePath(), fileName);
+
+        if(!storageFile.exists()){
+            try {
+                storageFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        try {
+            FileWriter fileWriter = new FileWriter(storageFile);
+            for(String str : buttonListToSave){
+                fileWriter.write(str);
+                fileWriter.write(" ");
+                //Log.d("MyApp",str);
+            }
+            fileWriter.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void retrieveData(){
+        Log.d("MyApp","Retrieving Data");
+        ArrayList<String> buttonListToSave = new ArrayList<>();
+
+        FileInputStream fileInputStream;
+        File file = new File(Environment.getExternalStorageDirectory()+"/EZMath/EZMath_Preferences.txt");
+
+        try {
+            if(file != null) {
+                Log.d("File", file.getAbsolutePath());
+                fileInputStream = new FileInputStream(file);
+                Scanner scanner = new Scanner(fileInputStream);
+                while(scanner.hasNext()){
+                    buttonListToSave.add(scanner.next());
+                }
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Log.d("MyApp","Here");
+
+        Log.d("MyApp", Integer.toString(buttonListToSave.size()));
+
+        setSavedButtons(buttonListToSave);
+
+//        for(String str : buttonListToSave){
+//            Log.d("MyApp",str);
+//        }
+
     }
 
     public void onClick(View v){

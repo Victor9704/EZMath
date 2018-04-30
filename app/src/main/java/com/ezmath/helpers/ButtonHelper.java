@@ -3,7 +3,7 @@ package com.ezmath.helpers;
 import android.view.View;
 import android.widget.Button;
 
-import com.ezmath.main.ezmath.R;
+import com.ezmath.main.R;
 
 import java.util.ArrayList;
 import java.util.Arrays;
