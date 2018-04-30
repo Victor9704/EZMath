@@ -14,7 +14,7 @@ import android.widget.ListView;
 import com.ezmath.adapters.FunctionListAdapter;
 import com.ezmath.helpers.ButtonHelper;
 import com.ezmath.main.MainActivity;
-import com.ezmath.main.ezmath.R;
+import com.ezmath.main.R;
 import com.ezmath.objects.RowButtonDetails;
 
 import java.util.ArrayList;
