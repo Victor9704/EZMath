@@ -63,7 +63,7 @@ public class OptionsActivity extends AppCompatActivity {
         List<RowButtonDetails> buttonDetailsList = new ArrayList<>();
         int count = 0;
         for(String i : btnList){
-            RowButtonDetails temp = new RowButtonDetails("Button " + count, btnList.get(count), 0);
+            RowButtonDetails temp = new RowButtonDetails("Button " + (count+1), btnList.get(count), 0);
             buttonDetailsList.add(temp);
             count++;
         }
@@ -103,19 +103,55 @@ public class OptionsActivity extends AppCompatActivity {
 
     public void onClick(View view){
 
-        switch (view.getId()){
+        Intent intent;
+
+        switch (view.getId()) {
             case R.id.btnReset:
-                Intent intent = new Intent(this, MainActivity.class);
+                intent = new Intent(this, MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);//makes sure can't go back to it while pressing back button
 
                 //Put extras (in this case only the expression)
-                intent.putExtra("expression",expression);
+                intent.putExtra("expression", expression);
                 intent.putExtra("expressionPosition", expressionPosition);
                 intent.putExtra("selectedOptionsButton", 1);
 
                 startActivity(intent);
                 finish();
+
                 break;
+
+            case R.id.btnSave:
+                intent = new Intent(this, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);//makes sure can't go back to it while pressing back button
+
+                //Create new button preferences array
+                List<String> newPreferencesButtonList = createNewPreferencesArray();
+
+                //Put extras (in this case only the expression)
+                intent.putExtra("expression", expression);
+                intent.putExtra("expressionPosition", expressionPosition);
+                intent.putExtra("selectedOptionsButton", 2);
+                intent.putStringArrayListExtra("newPreferenceArray", (ArrayList<String>) newPreferencesButtonList);
+
+
+                startActivity(intent);
+                finish();
+
+                break;
+
         }
+    }
+
+    public List<String> createNewPreferencesArray(){
+
+        List<String> newPreferencesButtonList = new ArrayList<>();
+        ButtonHelper buttonHelper = new ButtonHelper();
+
+        for(int i =0; i<listView.getAdapter().getCount(); i++){
+            String newButtonPreference = buttonHelper.getButtonNamesList().get(((RowButtonDetails)listView.getAdapter().getItem(i)).getSpinnerSelectedPosition());
+            newPreferencesButtonList.add(newButtonPreference);
+        }
+
+        return newPreferencesButtonList;
     }
 }

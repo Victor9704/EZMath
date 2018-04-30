@@ -1,28 +1,22 @@
 package com.ezmath.main;
 
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
-import android.app.VoiceInteractor;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewDebug;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.support.v7.widget.Toolbar;
 
 import com.ezmath.activities.OptionsActivity;
 import com.ezmath.helpers.ButtonHelper;
-import com.ezmath.main.ezmath.R;
-import com.ezmath.objects.RowButtonDetails;
+import com.ezmath.main.R;
 
+import java.lang.reflect.Array;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,29 +36,34 @@ public class MainActivity extends AppCompatActivity {
     private String result;
     private int expressionPosition = 1;
 
-    //Case reset requested variables
-    List<RowButtonDetails> resetButtonList;
+    private ArrayList<String> buttonListToSave;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //TO DO save data and recover on app restart using files!
+
         Bundle bundle = getIntent().getExtras();
 
         //Get and set extras data
         if(bundle != null){
+
+            if(bundle.get("expression") != null)
             this.expression = (String) bundle.get("expression");
+            if(bundle.get("expressionPosition") != null)
             this.expressionPosition = (int) bundle.get("expressionPosition");
+
+            //Change buttons or reset button names
             if(bundle.get("selectedOptionsButton") != null){
                 if((int)bundle.get("selectedOptionsButton") == 1){
                     //TO DO IMPLEMENT AND CALL RESET FROM HELPER
                     Log.d("MyApp","Options requested button reset!");
+
                 }
-                if((int)bundle.get("selectedOptionsButton") == 2){
-                    //TO DO PARCELABLE AND GET FROM INTENT EXTRAS (GET FOM OPTIONS ACTIVITY)
-                    Log.d("MyApp","Options requested new buttons settings");
-                    resetButtonList = null;
+                else if((int)bundle.get("selectedOptionsButton") == 2){
+                    setNewButtonPreferences(bundle);
                 }
             }
         }
@@ -89,8 +88,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-//        buttonHelper = new ButtonHelper(getWindow().getDecorView().getRootView());
-//        buttonHelper.setDefaultButtons();
+        //Create list of buttons to store
+        buttonListToSave = createButtonList();
 
     }
 
@@ -105,13 +104,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         //Create list of buttons
-        List<String> btnList = new ArrayList<String>();
-        Button temp;
-        for (int i = 0; i < 25; i++) {
-            int id = getResources().getIdentifier("btn"+i, "id", getPackageName());
-            temp = (Button) findViewById(id);
-            btnList.add(temp.getText().toString());
-        }
+        ArrayList<String> btnList = createButtonList();
 
         Intent intent = new Intent(this, OptionsActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);//makes sure can't go back to it while pressing back button
@@ -228,10 +221,42 @@ public class MainActivity extends AppCompatActivity {
         return result;
     }
 
-    //TO DO
-    public void setNewButtonPreferences(){
+    public ArrayList<String> createButtonList(){
 
+        List<String> btnList = new ArrayList<String>();
+        Button temp;
+        for (int i = 0; i < 25; i++) {
+            int id = getResources().getIdentifier("btn"+i, "id", getPackageName());
+            temp = (Button) findViewById(id);
+            btnList.add(temp.getText().toString().toLowerCase());
+        }
 
+        return (ArrayList<String>) btnList;
+    }
+
+    public void setNewButtonPreferences(Bundle bundle){
+
+        ArrayList<String> optionsButtonList = bundle.getStringArrayList("newPreferenceArray");
+        Button temp;
+
+        for(int i = 0; i< optionsButtonList.size(); i++){
+            int id = getResources().getIdentifier("btn"+i, "id", getPackageName());
+            temp = (Button) findViewById(id);
+            if(!optionsButtonList.get(i).equals("Select")){
+                temp.setText(optionsButtonList.get(i));
+            }
+        }
+    }
+
+    public void setSavedButtons(ArrayList<String> buttonListToSave){
+
+        Button temp;
+
+        for(int i = 0; i< buttonListToSave.size(); i++){
+            int id = getResources().getIdentifier("btn"+i, "id", getPackageName());
+            temp = (Button) findViewById(id);
+            temp.setText(buttonListToSave.get(i));
+        }
     }
 
 }
