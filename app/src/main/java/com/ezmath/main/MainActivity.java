@@ -39,6 +39,9 @@ import parser.JParser;
 
 public class MainActivity extends AppCompatActivity {
 
+    private final static String APP_DIRECTORY_NAME = "EZMath";
+    private final static String APP_PREFERENCES_FILE = "EZMath_Preferences.txt";
+
     private ButtonHelper buttonHelper;
 
     private EditText editText;
@@ -60,10 +63,13 @@ public class MainActivity extends AppCompatActivity {
                         Manifest.permission.WRITE_EXTERNAL_STORAGE
                 },100);
 
+        //Get Extras
         Bundle bundle = getIntent().getExtras();
 
         //Get and set extras data
-        if(bundle != null){
+        if(bundle != null){//If Extras ----->
+            //First retrieve the existent data
+            retrieveData();
 
             if(bundle.get("expression") != null)
             this.expression = (String) bundle.get("expression");
@@ -85,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        //TO DO save data and recover on app restart using files!
+        //Set preferences when starting activity(Retrieved from Storage/EZMath/EZMath_Preferences)!
         retrieveData();
 
         //Set Edit Text
@@ -143,19 +149,19 @@ public class MainActivity extends AppCompatActivity {
     public void saveData(){
         Log.d("MyApp","Saving Data");
         String folderName = "EZMath";
-        String fileName = "EZMath_Preferences";
+        String fileName = "EZMath_Preferences.txt";
 
         //Create list of buttons to store
         ArrayList<String> buttonListToSave;
         buttonListToSave = createButtonList();
 
-        File EZMathFolder = new File(Environment.getExternalStorageDirectory(), folderName);
+        File EZMathFolder = new File(Environment.getExternalStorageDirectory(), APP_DIRECTORY_NAME);
 
         if(!EZMathFolder.exists()){
             EZMathFolder.mkdirs();
         }
 
-        File storageFile = new File(EZMathFolder.getAbsolutePath(), fileName);
+        File storageFile = new File(EZMathFolder.getAbsolutePath(), APP_PREFERENCES_FILE);
 
         if(!storageFile.exists()){
             try {
@@ -185,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<String> buttonListToSave = new ArrayList<>();
 
         FileInputStream fileInputStream;
-        File file = new File(Environment.getExternalStorageDirectory()+"/EZMath/EZMath_Preferences.txt");
+        File file = new File(Environment.getExternalStorageDirectory() + "/" + APP_DIRECTORY_NAME + "/" + APP_PREFERENCES_FILE);
 
         try {
             if(file != null) {
