@@ -37,6 +37,58 @@
             android:orientation="vertical">
 
             <LinearLayout
+                android:id="@+id/row0"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.25">
+
+                <Button
+                    android:id="@+id/btnInv0"
+                    android:visibility="invisible"
+                    android:clickable="false"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.2"
+                    />
+
+                <Button
+                    android:id="@+id/btnInv1"
+                    android:visibility="invisible"
+                    android:clickable="false"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.2"
+                    />
+
+                <Button
+                    android:id="@+id/btnInv2"
+                    android:visibility="invisible"
+                    android:clickable="false"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.2"
+                    />
+
+                <Button
+                    android:id="@+id/btnInv3"
+                    android:visibility="invisible"
+                    android:clickable="false"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.2"
+                    />
+
+                <Button
+                    android:id="@+id/btnDelete"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.2"
+                    android:onClick="onClick"
+                    android:text="\u232b" />
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/row1"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"

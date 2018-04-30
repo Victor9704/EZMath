@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //Save current Settings to Preferences file when closing main activity
+        //Save current Settings to Preferences file when finished creating
         saveData();
 
     }
@@ -227,6 +227,10 @@ public class MainActivity extends AppCompatActivity {
         Button tempBtn = v.findViewById(v.getId());
         String tempBtnText = tempBtn.getText().toString().toLowerCase();
 
+        if(tempBtn.getText().toString().toLowerCase().equals("\u232b")){
+            tempBtnText = "delete";
+        }
+
         if(tempBtn.getText().toString().toLowerCase().equals("\u221a")){
             tempBtnText = "sqrt";
         }
@@ -235,7 +239,7 @@ public class MainActivity extends AppCompatActivity {
             tempBtnText = "e^";
         }
 
-        if(!tempBtnText.equals("clear") && !tempBtnText.equals("solve")) {
+        if(!tempBtnText.equals("clear") && !tempBtnText.equals("solve") && !tempBtnText.equals("delete")) {
             if (tempBtnText.length() == 1) {
                 //If length 1 check for "0" as initial expression and if you have "0" and add "." to it
                 if (expression.equals("0") && !tempBtnText.equals(".")) {
@@ -308,6 +312,9 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
+        }
+        else if(tempBtnText.equals("delete")){
+            Log.d("MyApp", "TO DO Implement delete");
         }
 
         //Reset to new updated string, needed later
