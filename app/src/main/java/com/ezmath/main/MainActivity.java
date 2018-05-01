@@ -150,7 +150,9 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("expressionPosition", this.expressionPosition);
 
         //Close any toast before going to options
-        currentToast.cancel();
+        if(currentToast !=null){
+            currentToast.cancel();
+        }
 
         startActivity(intent);
         finish();
