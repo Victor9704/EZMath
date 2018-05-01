@@ -5,8 +5,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -14,6 +17,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ezmath.activities.OptionsActivity;
 import com.ezmath.helpers.ButtonHelper;
@@ -80,11 +84,35 @@ public class MainActivity extends AppCompatActivity {
             if(bundle.get("selectedOptionsButton") != null){
                 if((int)bundle.get("selectedOptionsButton") == 1){
                     //TO DO IMPLEMENT AND CALL RESET FROM HELPER
-                    Log.d("MyApp","Options requested button reset!");
 
+                    //Get ActionBar height
+                    int actionBarHeight = 0;
+                    TypedValue tv = new TypedValue();
+                    if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true))
+                    {
+                        actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data,getResources().getDisplayMetrics());
+                    }
+
+                    //Display message
+                    Toast toast = Toast.makeText(getApplicationContext(), "Buttons reset!", Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.TOP,0, actionBarHeight + 10);
+                    toast.show();
                 }
                 else if((int)bundle.get("selectedOptionsButton") == 2){
                     setNewButtonPreferences(bundle);
+
+                    //Get ActionBar height
+                    int actionBarHeight = 0;
+                    TypedValue tv = new TypedValue();
+                    if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true))
+                    {
+                        actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data,getResources().getDisplayMetrics());
+                    }
+
+                    //Display message
+                    Toast toast = Toast.makeText(getApplicationContext(), "Changes Saved!", Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.TOP,0, actionBarHeight + 10);
+                    toast.show();
                 }
                 //Save data if Preferences changed when returning from Options
                 saveData();
@@ -147,9 +175,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void saveData(){
-        Log.d("MyApp","Saving Data");
-        String folderName = "EZMath";
-        String fileName = "EZMath_Preferences.txt";
+//        Log.d("MyApp","Saving Data");
 
         //Create list of buttons to store
         ArrayList<String> buttonListToSave;
@@ -176,7 +202,6 @@ public class MainActivity extends AppCompatActivity {
             for(String str : buttonListToSave){
                 fileWriter.write(str);
                 fileWriter.write(" ");
-                //Log.d("MyApp",str);
             }
             fileWriter.close();
 
@@ -187,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void retrieveData(){
-        Log.d("MyApp","Retrieving Data");
+//        Log.d("MyApp","Retrieving Data");
         ArrayList<String> buttonListToSave = new ArrayList<>();
 
         FileInputStream fileInputStream;
@@ -214,10 +239,6 @@ public class MainActivity extends AppCompatActivity {
         Log.d("MyApp", Integer.toString(buttonListToSave.size()));
 
         setSavedButtons(buttonListToSave);
-
-//        for(String str : buttonListToSave){
-//            Log.d("MyApp",str);
-//        }
 
     }
 
@@ -314,7 +335,24 @@ public class MainActivity extends AppCompatActivity {
 
         }
         else if(tempBtnText.equals("delete")){
-            Log.d("MyApp", "TO DO Implement delete");
+            if(expressionPosition > 1) {//If there is more than 1 char in the expression string
+                String result = deleteFromExpression(expression, expressionPosition);
+                editText.setText(result, TextView.BufferType.EDITABLE);
+                expressionPosition--;
+                editText.setSelection(expressionPosition);
+            }
+            else if(expressionPosition == 1 && expression.length() == 1){//If there is only 1 element
+                String result = "0";
+                editText.setText(result, TextView.BufferType.EDITABLE);
+                expressionPosition = 1;
+                editText.setSelection(expressionPosition);
+            }
+            else if(expressionPosition == 1 && expression.length() > 1){
+                String result = deleteFromExpression(expression, expressionPosition);
+                editText.setText(result, TextView.BufferType.EDITABLE);
+                expressionPosition = 1;
+                editText.setSelection(expressionPosition);
+            }
         }
 
         //Reset to new updated string, needed later
@@ -327,6 +365,15 @@ public class MainActivity extends AppCompatActivity {
         String result = expression.substring(0,expressionPosition) + toConcat + expression.substring(expressionPosition,expression.length());
 
         return result;
+    }
+
+    public String deleteFromExpression(String expression, int expressionPosition){
+
+        StringBuilder result = new StringBuilder(expression);
+        String finalResult = result.deleteCharAt(expressionPosition-1).toString();
+
+        return finalResult;
+
     }
 
     public ArrayList<String> createButtonList(){
