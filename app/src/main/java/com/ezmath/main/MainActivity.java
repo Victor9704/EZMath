@@ -48,6 +48,9 @@ public class MainActivity extends AppCompatActivity {
 
     private ButtonHelper buttonHelper;
 
+    //Used to prevent toast overlapping
+    private Toast currentToast;
+
     private EditText editText;
     private int Precision;
 
@@ -85,34 +88,12 @@ public class MainActivity extends AppCompatActivity {
                 if((int)bundle.get("selectedOptionsButton") == 1){
                     //TO DO IMPLEMENT AND CALL RESET FROM HELPER
 
-                    //Get ActionBar height
-                    int actionBarHeight = 0;
-                    TypedValue tv = new TypedValue();
-                    if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true))
-                    {
-                        actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data,getResources().getDisplayMetrics());
-                    }
-
-                    //Display message
-                    Toast toast = Toast.makeText(getApplicationContext(), "Buttons reset!", Toast.LENGTH_LONG);
-                    toast.setGravity(Gravity.TOP,0, actionBarHeight + 10);
-                    toast.show();
+                    displayToastUnderActionBar("Buttons reset!");
                 }
                 else if((int)bundle.get("selectedOptionsButton") == 2){
                     setNewButtonPreferences(bundle);
 
-                    //Get ActionBar height
-                    int actionBarHeight = 0;
-                    TypedValue tv = new TypedValue();
-                    if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true))
-                    {
-                        actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data,getResources().getDisplayMetrics());
-                    }
-
-                    //Display message
-                    Toast toast = Toast.makeText(getApplicationContext(), "Changes Saved!", Toast.LENGTH_LONG);
-                    toast.setGravity(Gravity.TOP,0, actionBarHeight + 10);
-                    toast.show();
+                    displayToastUnderActionBar("Changes Saved!");
                 }
                 //Save data if Preferences changed when returning from Options
                 saveData();
@@ -167,6 +148,9 @@ public class MainActivity extends AppCompatActivity {
         intent.putStringArrayListExtra("btnList", (ArrayList<String>) btnList);
         intent.putExtra("expression", this.expression);
         intent.putExtra("expressionPosition", this.expressionPosition);
+
+        //Close any toast before going to options
+        currentToast.cancel();
 
         startActivity(intent);
         finish();
@@ -234,9 +218,9 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        Log.d("MyApp","Here");
-
-        Log.d("MyApp", Integer.toString(buttonListToSave.size()));
+//        Log.d("MyApp","Here");
+//
+//        Log.d("MyApp", Integer.toString(buttonListToSave.size()));
 
         setSavedButtons(buttonListToSave);
 
@@ -306,12 +290,14 @@ public class MainActivity extends AppCompatActivity {
         else if(tempBtnText.equals("solve")){
             JParser jp = JParser.getInstance();
 
+            jp.setConstantExpression();
+
                 try {
                     jp.compileExpression(expression);
-                } catch (LexerException e) {
+                }catch (Exception e){
+                    displayToastUnderActionBar("Invalid Expression!");
                     e.printStackTrace();
-                } catch (ParserException e) {
-                    e.printStackTrace();
+//                    Log.d("My App", "Invalid expression");
                 }
 
                 try {
@@ -331,6 +317,7 @@ public class MainActivity extends AppCompatActivity {
                         editText.setSelection(expressionPosition);
                     }
                 } catch (ParserException e) {
+                    displayToastUnderActionBar("Invalid Expression!");
                     e.printStackTrace();
                 }
 
@@ -359,6 +346,34 @@ public class MainActivity extends AppCompatActivity {
         //Reset to new updated string, needed later
         expression = editText.getText().toString();
 
+    }
+
+    public int computeActionBarHeight(){
+        int actionBarHeight = 0;
+        TypedValue tv = new TypedValue();
+
+        if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true))
+        {
+            actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data,getResources().getDisplayMetrics());
+        }
+
+        return actionBarHeight;
+    }
+
+    //Uses global var currentToast to avoid overlapping!
+    public void displayToastUnderActionBar(String toastString){
+        int actionBarHeight = computeActionBarHeight();
+
+        //Display message
+        if(currentToast != null){
+            currentToast.cancel();
+            currentToast = null;
+        }
+        else{
+            currentToast = Toast.makeText(getApplicationContext(), toastString, Toast.LENGTH_LONG);
+            currentToast.setGravity(Gravity.TOP,0, actionBarHeight + 10);
+            currentToast.show();
+        }
     }
 
     public String concatExpression(String expresion, String toConcat, int expressionPosition){
