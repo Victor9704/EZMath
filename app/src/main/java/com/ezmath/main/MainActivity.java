@@ -86,7 +86,8 @@ public class MainActivity extends AppCompatActivity {
             //Change buttons or reset button names
             if(bundle.get("selectedOptionsButton") != null){
                 if((int)bundle.get("selectedOptionsButton") == 1){
-                    //TO DO IMPLEMENT AND CALL RESET FROM HELPER
+                    buttonHelper = new ButtonHelper();
+                    setDefaultButtons((ArrayList<String>) buttonHelper.getDefaultButtonNamesList());
 
                     displayToastUnderActionBar("Buttons reset!");
                 }
@@ -366,16 +367,16 @@ public class MainActivity extends AppCompatActivity {
     public void displayToastUnderActionBar(String toastString){
         int actionBarHeight = computeActionBarHeight();
 
-        //Display message
+        //if already displaying, remove the one that is is displayed
         if(currentToast != null){
             currentToast.cancel();
             currentToast = null;
         }
-        else{
-            currentToast = Toast.makeText(getApplicationContext(), toastString, Toast.LENGTH_LONG);
-            currentToast.setGravity(Gravity.TOP,0, actionBarHeight + 10);
-            currentToast.show();
-        }
+
+        //Display message
+        currentToast = Toast.makeText(getApplicationContext(), toastString, Toast.LENGTH_LONG);
+        currentToast.setGravity(Gravity.TOP,0, actionBarHeight + 10);
+        currentToast.show();
     }
 
     public String concatExpression(String expresion, String toConcat, int expressionPosition){
@@ -429,6 +430,22 @@ public class MainActivity extends AppCompatActivity {
             int id = getResources().getIdentifier("btn"+i, "id", getPackageName());
             temp = (Button) findViewById(id);
             temp.setText(buttonListToSave.get(i));
+        }
+    }
+
+    public void setDefaultButtons(ArrayList<String> defaultButtonNamesList) {
+        Button temp;
+
+        //Delete Button is non-modifiable/not removable
+//        temp = findViewById(R.id.btnDelete);
+//        temp.setText("\u232b");
+
+        int i = 0;//used to concat the id for the buttons below
+        for (String str : defaultButtonNamesList) {
+            int id = getResources().getIdentifier("btn" + i, "id", getPackageName());
+            temp = (Button) findViewById(id);
+            temp.setText(str);
+            i++;
         }
     }
 
