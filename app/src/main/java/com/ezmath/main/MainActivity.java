@@ -302,6 +302,7 @@ public class MainActivity extends AppCompatActivity {
             editText.setSelection(expressionPosition);
 
         }
+        //TO DO - CATCH EXCEPTIONS AND DISPLPAY WRONG EXPRESSION MESSAGE TO USER
         else if(tempBtnText.equals("solve")){
             JParser jp = JParser.getInstance();
 
