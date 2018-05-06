@@ -318,7 +318,7 @@ public class MainActivity extends AppCompatActivity {
                         editText.setSelection(expressionPosition);
                     }else {
                         //Currently precision of 4 is displayed
-                        dFormat = new DecimalFormat("#.####");
+                        dFormat = new DecimalFormat("#.########");
                         editText.setText(dFormat.format(result).toString(), TextView.BufferType.EDITABLE);
                         expressionPosition = editText.getText().length();
                         editText.setSelection(expressionPosition);
