@@ -250,12 +250,14 @@ public class MainActivity extends AppCompatActivity {
         if(!tempBtnText.equals("clear") && !tempBtnText.equals("solve") && !tempBtnText.equals("delete")) {
             if (tempBtnText.length() == 1) {
                 //If length 1 check for "0" as initial expression and if you have "0" and add "." to it
-                if (expression.equals("0") && !tempBtnText.equals(".")) {
+                if (expression.equals("0") && !tempBtnText.equals(".") && !tempBtnText.equals("+") && !tempBtnText.equals("-") && !tempBtnText.equals("*")
+                        && !tempBtnText.equals("/")) {
                     result = tempBtnText;
                     editText.setText(result, TextView.BufferType.EDITABLE);
                     editText.setSelection(expressionPosition);
                 }
-                else if(expression.equals("0") && tempBtnText.equals(".")){
+                else if(expression.equals("0") && tempBtnText.equals(".") && tempBtnText.equals("+") && tempBtnText.equals("-") && tempBtnText.equals("*")
+                        && tempBtnText.equals("/")){
                     result = "0" + tempBtnText;
                     expressionPosition++;//For "0." string length is 2
                     editText.setText(result, TextView.BufferType.EDITABLE);
