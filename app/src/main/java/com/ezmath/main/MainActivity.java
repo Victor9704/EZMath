@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
     private Toast currentToast;
 
     private EditText editText;
-    private int Precision;
+    private int Precision = 8;//Standard result precision is 8
 
     private String expression = null;
     private String result;
@@ -317,9 +317,8 @@ public class MainActivity extends AppCompatActivity {
                         expressionPosition = editText.getText().length();
                         editText.setSelection(expressionPosition);
                     }else {
-                        //Currently precision of 4 is displayed
-                        dFormat = new DecimalFormat("#.########");
-                        editText.setText(dFormat.format(result).toString(), TextView.BufferType.EDITABLE);
+                        //Compute precision based on the value of the precision defining variable
+                        editText.setText(getResultWithPrecision(Precision,result), TextView.BufferType.EDITABLE);
                         expressionPosition = editText.getText().length();
                         editText.setSelection(expressionPosition);
                     }
@@ -451,6 +450,25 @@ public class MainActivity extends AppCompatActivity {
             temp.setText(str);
             i++;
         }
+    }
+
+    public String getResultWithPrecision(int precision, double result){
+
+        //Create decimal format string
+        String precisionString = "#";
+
+        if(precision > 0){
+            precisionString = precisionString.concat(".");
+        }
+
+        for(int i = 0;i<precision;i++){
+            precisionString = precisionString.concat("#");
+        }
+
+        DecimalFormat dFormat = new DecimalFormat(precisionString);
+        String finalResult = dFormat.format(result).toString();
+
+        return finalResult;
     }
 
 }
